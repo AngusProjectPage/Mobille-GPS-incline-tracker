@@ -107,7 +107,7 @@ function error(error) {
 //
 function newPosition(position) {
   if (previousCoordinate) {
-    distance += haversign(previousCoordinate, position.coords);
+    distance = haversign(previousCoordinate, position.coords);
 
     liveDistance.innerText =
       "Live Distance: " + Math.floor(1000 * distance) + " m";
@@ -204,7 +204,6 @@ function orientationChangeHandler(event) {
 
 // Initialise page display and handlers on page load
 const init = function () {
-  screen.orientation.lock("portrait");
   content = document.getElementById("content");
   startStopButton = document.getElementById("startStop");
   liveDistance = document.getElementById("liveDistance");
