@@ -7,14 +7,15 @@ let paceDisplay;
 let timeCursor;
 let distanceCursor;
 let selectedField;
+let content;
 
 // Initialise Start button for live distance/pace calculation
-const startStopButton = document.getElementById("startStop");
-const liveDistance = document.getElementById("liveDistance");
-const livePace = document.getElementById("livePace");
+let startStopButton;
+let liveDistance;
+let livePace;
 
-// Initialise Incline paragraph 
-const inclineParagraph = document.getElementById("inclineParagraph");
+// Initialise Incline paragraph
+let inclineParagraph;
 
 // MANUAL ENTRY FUNCTIONS //
 const buttonClickHandler = function (evt) {
@@ -63,8 +64,6 @@ const buttonClickHandler = function (evt) {
 };
 // END OF MANUAL ENTRY FUNCTIONS //
 
-
-
 // LIVE DISTANCE AND PACE FUNCTIONS //
 
 // Options for the GPS watcher
@@ -81,124 +80,151 @@ let previousCoordinate;
 let previousTimestamp;
 let previousDistance;
 let distance = 0;
+let paceCalculation;
 let watchID;
 
 function haversign(coords1, coords2) {
   let radius = 6371;
-  let toRad = function(number) {
-    return number * Math.PI / 180;
+  let toRad = function (number) {
+    return (number * Math.PI) / 180;
   };
 
   let latitudeDistance = toRad(coords2.latitude - coords1.latitude);
   let longitudeDistance = toRad(coords2.longitude - coords1.longitude);
-  let a = Math.sin(latitudeDistance / 2) * Math.sin(latitudeDistance / 2) + 
-  Math.cos(toRad(coords1.latitude)) * Math.cos(toRad(coords2.latitude)) * 
-  Math.sin(longitudeDistance / 2) * Math.sin(longitudeDistance / 2);
+  let a =
+    Math.sin(latitudeDistance / 2) * Math.sin(latitudeDistance / 2) +
+    Math.cos(toRad(coords1.latitude)) *
+      Math.cos(toRad(coords2.latitude)) *
+      Math.sin(longitudeDistance / 2) *
+      Math.sin(longitudeDistance / 2);
 
-  return radius * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))); 
+  return radius * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 }
 
 function error(error) {
   alert("GPS ERROR: " + error.code);
 }
-// 
+//
 function newPosition(position) {
-  if(previousCoordinate) {
+  if (previousCoordinate) {
     distance += haversign(previousCoordinate, position.coords);
 
-    liveDistance.innerText = Math.floor(1000 * distance) + " m";
-    let paceCalculation = Math.round((((position.timestamp - previousTimestamp)/1000)/60) / (distance - previousDistance)) + " mins/km";
-    livePace.innerText = (paceCalculation < Infinity) ? paceCalculation : "0" + " mins/km";
+    liveDistance.innerText =
+      "Live Distance: " + Math.floor(1000 * distance) + " m";
+    paceCalculation = Math.abs(
+      Math.round(
+        (position.timestamp - previousTimestamp) /
+          1000 /
+          60 /
+          (distance - previousDistance)
+      )
+    );
+    console.log(paceCalculation);
+    livePace.innerText =
+      "Live Pace: " +
+      (paceCalculation < Infinity
+        ? paceCalculation + " mins/km"
+        : "0" + " mins/km");
 
     previousCoordinate = position.coords;
     previousTimestamp = position.timestamp;
     previousDistance = distance;
-  }
-  else {
+  } else {
     previousTimestamp = position.timestamp;
     previousDistance = 0;
-    previousCoordinate = position.coords;    
+    previousCoordinate = position.coords;
   }
 }
 
 function startGPS() {
-  if("geolocation" in navigator) {
+  if ("geolocation" in navigator) {
     watchID = navigator.geolocation.watchPosition(newPosition, error, options);
   } else {
     alert("Your device does not support Geolocation");
   }
 }
 
-function forceUpdate(options) {
-  navigator.geolocation.getCurrentPosition(newPosition, error,  options);
-}
-
 function stopGPS() {
   navigator.geolocation.clearWatch(watchID);
+  distance = 0;
+  paceCalculation = 0;
 }
 
 const startStopHandler = function () {
-  if(startStopButton.innerText === "Start") {
+  if (startStopButton.innerText === "Start Live Tracking") {
     // Button active
-    startStopButton.innerText = "Stop";
+    startStopButton.classList.remove("startStopBackgroundGreen");
+    startStopButton.classList.add("startStopBackgroundRed");
+    startStopButton.innerText = "Stop Live Tracking";
     liveDistance.style.display = "block";
-    livePace.style.display = "block"
+    livePace.style.display = "block";
 
+    // Add margin to the top of content
+    //content.style.marginTop = "5vh";
     // Start GPS tracking
     startGPS();
-  }
-  else {
+  } else {
     // Button inactive
-    startStopButton.innerText = "Start";
+    content.style.marginTop = "0";
+    startStopButton.classList.remove("startStopBackgroundRed");
+    startStopButton.classList.add("startStopBackgroundGreen");
+    startStopButton.innerText = "Start Live Tracking";
     liveDistance.style.display = "none";
     livePace.style.display = "none";
 
     // Stop GPS tracking
     stopGPS();
   }
-}
+};
 // END OF LIVE DISTANCE AND PACE FUNCTIONS
-
 
 // INCLINE FUNCTIONS //
 
 function orientationChangeHandler(event) {
   // Set the orientation variables
-  let inclineAngle = event.beta; 
+  let inclineAngle = event.beta;
   let inclineAngleRounded = Math.round(inclineAngle);
 
-  if(inclineAngleRounded > 90) {
-    inclineAngle = 180 - inclineAngleRounded;
-    inclineAngleRounded = 180 - inclineAngleRounded;
+  // Max incline at -45 or +45 degrees
+  const minIncline = -45;
+  const maxIncline = 45;
+  if (inclineAngle > maxIncline || inclineAngle < minIncline) {
+    inclineParagraph.innerText = `◬ Lay flat on ground ◬`;
+  } else {
+    const inclineAngleRadians = (inclineAngle * Math.PI) / 180;
+    const tanElevationAngle = Math.tan(inclineAngleRadians);
+    const inclinePercentage = Math.round(tanElevationAngle * 100);
+
+    const upOrDown = inclineAngle > 0 ? "uphill" : "downhill";
+    inclineParagraph.innerText = `◬ Incline: ${inclinePercentage}% ${upOrDown} (${inclineAngleRounded}°) ◬`;
   }
-  else if(inclineAngle < -90) {
-    inclineAngle = -180 - inclineAngleRounded;
-    inclineAngleRounded = -180 - inclineAngleRounded;
-  }
-
-  const inclineAngleRadians = inclineAngle * Math.PI / 180;
-  const tanElevationAngle = Math.tan(inclineAngleRadians);
-  const inclinePercentage = Math.round(tanElevationAngle * 100);
-
-
-
-
-  const upOrDown = (inclineAngle > 0) ? "uphill" : "downhill";
-  inclineParagraph.innerText = `◬ Incline: ${inclinePercentage}% ${upOrDown} (${inclineAngleRounded}°) ◬`;
 }
 
 // END OF INCLINE FUNCTIONS //
 
-// Initialise page display and handlers on page load 
+// Initialise page display and handlers on page load
 const init = function () {
+  screen.orientation.lock("portrait");
+  content = document.getElementById("content");
+  startStopButton = document.getElementById("startStop");
+  liveDistance = document.getElementById("liveDistance");
+  livePace = document.getElementById("livePace");
+  inclineParagraph = document.getElementById("inclineParagraph");
+
   timeInput = document.getElementById("timeInput");
   timeInput.innerText = "0";
 
   timeCursor = document.getElementById("timeCursor");
+  timeCursor.style.display = "inline";
 
   distanceInput = document.getElementById("distanceInput");
   distanceInput.innerText = "0";
   distanceCursor = document.getElementById("distanceCursor");
+
+  // Set active field to time
+  selectedField = "time";
+  timeCursor.style.display = "inline";
+  distanceCursor.style.display = "none";
 
   paceDisplay = document.getElementById("paceDisplay");
   paceDisplay.innerText = "--";
@@ -231,15 +257,16 @@ const init = function () {
   distanceInput.addEventListener("click", () => {
     selectedField = "distance";
     timeCursor.style.display = "none";
-    distanceCursor.style.display = "inline";;
+    distanceCursor.style.display = "inline";
   });
 
-  // Calculates manual entry every 0.1 seconds 
+  // Calculates manual entry every 0.1 seconds
   setInterval(() => {
     if (timeInput.innerText >= 5 && distanceInput.innerText >= 10) {
       let time = timeInput.innerText;
-      let distance = distanceInput.innerText;
-      paceDisplay.innerText = Math.floor((time / (distance/1000))).toString() + " mins/km";
+      let manualDistance = distanceInput.innerText;
+      paceDisplay.innerText =
+        Math.floor(time / (manualDistance / 1000)).toString() + " mins/km";
     } else {
       paceDisplay.innerText = "--";
     }
@@ -252,12 +279,11 @@ const init = function () {
   inclineParagraph.addEventListener("click", () => {
     window.addEventListener("deviceorientation", orientationChangeHandler);
     // Remove the handler after 30 seconds
-    setTimeout(function() {
+    setTimeout(function () {
       window.removeEventListener("deviceorientation", orientationChangeHandler);
       inclineParagraph.innerText = "◬ Tap to show incline ◬";
     }, 30000);
   });
-
 };
 
 window.addEventListener("pageshow", init);

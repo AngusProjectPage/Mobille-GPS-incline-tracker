@@ -1,36 +1,67 @@
-.app-title {
-  text-align: center;
+* {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  height: 100vh;
 }
 
 main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   color: white;
+  height: 100%;
 }
 
 .container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   background-color: #94a3b8;
-  padding: 1rem 2rem;
   -webkit-box-shadow: 4px 4px 5px 4px rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 4px 4px 5px 4px rgba(0, 0, 0, 0.1);
   box-shadow: 4px 4px 5px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 100%;
+}
+
+#inputzone {
+  padding-top: 13px;
+  align-self: start;
 }
 
 #keypad {
   display: flex;
   flex-direction: column;
-  gap: 2vh;
+  gap: 1vh;
   margin-bottom: 2vh;
+}
+
+#keypad > div {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 1vh;
 }
 
 #keypad button {
   color: white;
-  background-color: #0f172a;
+  background-color: #1e293b;
+  border: none;
   width: 10vh;
   height: 7.5vh;
   margin: 0 0.1rem;
   border-radius: 3px;
+}
+
+#keypad button:active {
+  background-color: #121923;
+  width: 9.7vh;
+  height: 7.2vh;
 }
 
 #time,
@@ -40,9 +71,47 @@ main {
 }
 
 #startStop {
-  background-color: #22c55e;
-  min-width: 100%;
+  font-weight: bold;
+  width: 100%;
   border-radius: 3px;
-  width: 10vh;
+  border: none;
   height: 7.5vh;
 }
+
+#livezone {
+  background-color: #59626e;
+  border-radius: 4px;
+}
+
+#livezone > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.startStopBackgroundGreen {
+  background-color: #22c55e;
+}
+
+.startStopBackgroundGreen:active {
+  background-color: #1b9e4b;
+}
+
+.startStopBackgroundRed {
+  background-color: #dc2626;
+}
+
+.startStopBackgroundRed:active {
+  background-color: #b01e1e;
+}
+
+#inclineParagraph {
+  text-align: center;
+}
+
+/* Small Screen */
+/* 
+@media only screen and (max-width: 576px) {
+
+}
+*/
