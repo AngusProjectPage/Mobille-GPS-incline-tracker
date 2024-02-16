@@ -1,0 +1,48 @@
+.app-title {
+  text-align: center;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+}
+
+.container {
+  background-color: #94a3b8;
+  padding: 1rem 2rem;
+  -webkit-box-shadow: 4px 4px 5px 4px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 4px 4px 5px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 4px 4px 5px 4px rgba(0, 0, 0, 0.1);
+}
+
+#keypad {
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+  margin-bottom: 2vh;
+}
+
+#keypad button {
+  color: white;
+  background-color: #0f172a;
+  width: 10vh;
+  height: 7.5vh;
+  margin: 0 0.1rem;
+  border-radius: 3px;
+}
+
+#time,
+#distance,
+#pace {
+  display: inline-block;
+}
+
+#startStop {
+  background-color: #22c55e;
+  min-width: 100%;
+  border-radius: 3px;
+  width: 10vh;
+  height: 7.5vh;
+}

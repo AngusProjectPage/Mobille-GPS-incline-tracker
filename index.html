@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>MadOneTemplate</title>
+    <link rel="stylesheet" href="normalise.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-new-gr-c-s-check-loaded="8.909.0" data-gr-ext-installed="">
+    <header>
+      <h1 class="app-title">Hiker Helper</h1>
+    </header>
+    <main>
+      <div class="container">
+        <div id="inputzone">
+          <div>
+            <label for="time">Input Time: </label>
+            <p id="time">
+              <span id="timeInput"></span>
+              <span id="timeCursor" style="display: none">|</span>
+            </p>
+          </div>
+          <div>
+            <label for="distance">Input Distance: </label>
+            <p id="distance">
+              <span id="distanceInput"></span>
+              <span id="distanceCursor" style="display: none">|</span>
+            </p>
+          </div>
+          <div>
+            <label for="pace">Pace: </label>
+            <p id="pace">
+              <span id="paceDisplay"></span>
+            </p>
+          </div>
+        </div>
+        <div>
+          <div id="keypad">
+            <!--Put your keypad buttons here -->
+            <div>
+              <button id="b1">1</button>
+              <button id="b2">2</button>
+              <button id="b3">3</button>
+            </div>
+            <div>
+              <button id="b4">4</button>
+              <button id="b5">5</button>
+              <button id="b6">6</button>
+            </div>
+            <div>
+              <button id="b7">7</button>
+              <button id="b8">8</button>
+              <button id="b9">9</button>
+            </div>
+            <div>
+              <button id="bC">C</button>
+              <button id="b0">0</button>
+              <button id="bB">&#8592;</button>
+            </div>
+          </div>
+          <div id="livezone">
+            <p id="liveDistance" style="display: none">0 m</p>
+            <p id="livePace" style="display: none">0 mins/km</p>
+            <button id="startStop">Start</button>
+          </div>
+        </div>
+        <div id="inclinezone">
+          <p id="inclineParagraph">◬ Tap to show incline ◬</p>
+        </div>
+      </div>
+    </main>
+    <footer></footer>
+    <script src="madone.js"></script>
+  </body>
+</html>
